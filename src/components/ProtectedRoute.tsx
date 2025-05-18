@@ -1,4 +1,3 @@
-
 import { ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -15,7 +14,15 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
 
   useEffect(() => {
     if (!loading && !user) {
-      navigate("/auth");
+      // Prevent back navigation to protected routes after logout
+      navigate('/auth', { replace: true });
+      // Remove all history entries except /auth
+      window.history.pushState(null, '', '/auth');
+      const handlePopState = () => {
+        navigate('/auth', { replace: true });
+      };
+      window.addEventListener('popstate', handlePopState);
+      return () => window.removeEventListener('popstate', handlePopState);
     } else if (!loading && user) {
       // If a specific role is required, check if user has that role
       if (requiredRole && userRole !== requiredRole) {

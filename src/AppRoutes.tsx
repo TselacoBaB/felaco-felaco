@@ -18,6 +18,7 @@ import CreatorAnalytics from "./pages/app/CreatorAnalytics";
 import CreatorWallet from "./pages/app/CreatorWallet";
 import Settings from "./pages/app/Settings";
 import NotFound from "./pages/NotFound";
+import ChatView from "./pages/app/ChatView";
 
 const AppRoutes = () => {
   return (
@@ -122,6 +123,14 @@ const AppRoutes = () => {
         <ProtectedRoute>
           <MobileLayout>
             <Settings />
+          </MobileLayout>
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/app/messages/:userId" element={
+        <ProtectedRoute>
+          <MobileLayout>
+            <ChatView />
           </MobileLayout>
         </ProtectedRoute>
       } />

@@ -1,14 +1,21 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from '@/contexts/AuthContext';
 
 const LiveStream = () => {
+  const { userProfile, userRole } = useAuth();
   const [title, setTitle] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (!userProfile || userRole !== 'creator') {
+      navigate('/app', { replace: true });
+    }
+  }, [userProfile, userRole, navigate]);
   
   const handleStartLive = () => {
     if (!title.trim()) {
@@ -29,6 +36,10 @@ const LiveStream = () => {
       });
       navigate("/app");
     }, 1500);
+  };
+  
+  const handleLovenseConnect = () => {
+    window.open('https://api.lovense.com/console/v2/login', '_blank');
   };
   
   return (
@@ -61,11 +72,20 @@ const LiveStream = () => {
         />
       </div>
       
+      {userRole === 'creator' && (
+        <Button
+          onClick={handleLovenseConnect}
+          className="w-full mb-4 bg-pink-500 hover:bg-pink-600"
+        >
+          Connect Lovense Device
+        </Button>
+      )}
+      
       <div className="space-y-2">
         <Button 
           onClick={handleStartLive} 
           className="w-full bg-red-500 hover:bg-red-600"
-          disabled={isLoading}
+          disabled={isLoading || userRole !== 'creator'}
         >
           {isLoading ? "Starting..." : "Start Live Stream"}
         </Button>

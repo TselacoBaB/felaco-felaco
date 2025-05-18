@@ -1,4 +1,3 @@
-
 import { ReactNode, useEffect, useState } from "react";
 import BottomNav from "./BottomNav";
 import { useLocation } from "react-router-dom";
@@ -69,18 +68,8 @@ const MobileLayout = ({ children }: MobileLayoutProps) => {
   };
 
   return (
-    <div 
-      className="flex min-h-screen flex-col bg-white"
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-    >
-      <main 
-        className={`flex-1 pb-16 transition-all duration-300 ease-in-out ${
-          isPageTransitioning 
-            ? 'opacity-0 ' + (swipeDirection === 'left' ? 'translate-x-6' : '-translate-x-6')
-            : 'opacity-100 translate-x-0'
-        }`}
-      >
+    <div className={`min-h-screen flex flex-col bg-gray-50`}>
+      <main className="flex-1 w-full max-w-screen-sm mx-auto px-4 sm:px-4 md:px-4 lg:px-4 xl:px-4">
         {children}
       </main>
       <BottomNav />

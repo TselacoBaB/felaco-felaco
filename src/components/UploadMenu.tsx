@@ -1,4 +1,3 @@
-
 import { X } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -12,10 +11,12 @@ const UploadMenu = ({ onClose }: UploadMenuProps) => {
       <div
         className="absolute bottom-20 left-1/2 w-11/12 max-w-sm -translate-x-1/2 rounded-xl bg-white p-5 shadow-xl"
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
       >
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold">Create</h3>
-          <button onClick={onClose}>
+          <button onClick={onClose} aria-label="Close upload menu" type="button">
             <X size={24} />
           </button>
         </div>

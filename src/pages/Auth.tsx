@@ -15,6 +15,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../store';
+import { setLoading, setUser, setError, setRegistrationSuccess, resetAuthState } from '../slices/authSlice';
+import { useToast } from '@/hooks/use-toast';
+import { normalizeAuthUser } from "@/lib/normalizeAuthUser";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email"),
@@ -38,6 +43,9 @@ type SignupFormValues = z.infer<typeof signupSchema>;
 const Auth = () => {
   const { user, userRole, signIn, signUp, loading } = useAuth();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { toast } = useToast();
+  const authState = useSelector((state: RootState) => state.auth);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
 
@@ -61,29 +69,50 @@ const Auth = () => {
   });
 
   const handleLogin = async (data: LoginFormValues) => {
+    dispatch(setLoading(true));
     setIsSubmitting(true);
     try {
-      await signIn(data.email, data.password);
-      // Navigation is handled by useEffect below
+      const result = await signIn(data.email, data.password);
+      if (result.error) {
+        dispatch(setError(result.error));
+        toast({ title: 'Login failed', description: result.error, variant: 'destructive' });
+      } else {
+        // Use the returned user from signIn, not the stale 'user' from context
+        if (result.user) {
+          dispatch(setUser(normalizeAuthUser(result.user)));
+        }
+        dispatch(setError(null));
+      }
     } catch (error) {
-      console.error(error);
+      dispatch(setError('Unknown error'));
     } finally {
       setIsSubmitting(false);
+      dispatch(setLoading(false));
     }
   };
 
   const handleSignup = async (data: SignupFormValues) => {
+    dispatch(setLoading(true));
     setIsSubmitting(true);
     try {
-      await signUp(data.email, data.password, {
+      const result = await signUp(data.email, data.password, {
         username: data.username,
         full_name: data.fullName,
       });
-      setActiveTab("login");
+      if (result.error) {
+        dispatch(setError(result.error));
+        toast({ title: 'Sign up failed', description: result.error, variant: 'destructive' });
+      } else {
+        dispatch(setRegistrationSuccess(true));
+        toast({ title: 'Registration successful', description: 'You can now log in.', variant: 'default' });
+        setActiveTab('login');
+        signupForm.reset();
+      }
     } catch (error) {
-      console.error(error);
+      dispatch(setError('Unknown error'));
     } finally {
       setIsSubmitting(false);
+      dispatch(setLoading(false));
     }
   };
 
@@ -97,8 +126,8 @@ const Auth = () => {
     }
   }, [user, userRole, loading, navigate]);
 
-  // Show a loading spinner while auth state is being determined
-  if (loading) {
+  // Show a loading spinner while auth state is being determined or submitting
+  if (loading || isSubmitting) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-felaco-purple/10 to-felaco-blue/10">
         <div className="flex flex-col items-center">

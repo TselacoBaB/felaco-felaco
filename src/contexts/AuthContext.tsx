@@ -22,8 +22,8 @@ interface AuthContextType {
   loading: boolean;
   userRole: UserRole;
   userProfile: UserProfile | null;
-  signIn: (email: string, password: string) => Promise<{ error: string | null }>;
-  signUp: (email: string, password: string, metadata?: Partial<UserProfile>) => Promise<{ error: string | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: string | null; user?: User | null }>;
+  signUp: (email: string, password: string, metadata?: Partial<UserProfile>) => Promise<{ error: string | null; user?: User | null }>;
   signOut: () => Promise<void>;
   updateProfile: (updates: Partial<UserProfile>) => Promise<{ error: string | null }>;
 }
@@ -103,17 +103,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         email,
         password,
       });
-      if (error) return { error: error.message };
+      if (error) return { error: error.message, user: null };
       // Fetch user profile and set role after sign in
       if (data.user) {
         await fetchUserProfile(data.user.id);
       }
-      return { error: null };
+      return { error: null, user: data.user };
     } catch (error: unknown) {
       if (error instanceof Error) {
-        return { error: error.message };
+        return { error: error.message, user: null };
       }
-      return { error: 'Unknown error' };
+      return { error: 'Unknown error', user: null };
     }
   };
 
@@ -125,7 +125,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         password,
         options: { data: metadata }
       });
-      if (error) return { error: error.message };
+      if (error) return { error: error.message, user: null };
       // Create wallet for the new user
       const userId = data.user?.id;
       if (userId) {
@@ -134,12 +134,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         ]);
         await fetchUserProfile(userId);
       }
-      return { error: null };
+      return { error: null, user: data.user };
     } catch (error: unknown) {
       if (error instanceof Error) {
-        return { error: error.message };
+        return { error: error.message, user: null };
       }
-      return { error: 'Unknown error' };
+      return { error: 'Unknown error', user: null };
     }
   };
 
