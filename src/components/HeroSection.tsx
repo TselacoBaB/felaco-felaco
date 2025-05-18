@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 
 const HeroSection = () => {
@@ -40,7 +39,7 @@ const HeroSection = () => {
           <div className="w-full max-w-md">
             <div className="relative w-full rounded-2xl bg-white shadow-xl overflow-hidden border border-gray-100 card-hover animate-float">
               <div className="bg-felaco-gradient h-3 w-full"></div>
-              <img src="/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png" alt="Felaco Logo" className="absolute top-6 left-6 w-8 h-8" />
+              <img src="/lovable-uploads/icon_logo_f.png" alt="Felaco Logo" className="absolute top-6 left-6 w-8 h-8" />
               <div className="p-6 pt-14">
                 <div className="space-y-4">
                   <div className="w-full h-40 bg-gray-100 rounded-lg"></div>

@@ -1,4 +1,3 @@
-
 import { Instagram, Twitter, Video } from "lucide-react";
 
 const Footer = () => {
@@ -8,7 +7,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <img src="/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png" alt="Felaco Logo" className="h-10 w-auto" />
+              <img src="/lovable-uploads/icon_logo_f.png" alt="Felaco Logo" className="h-10 w-auto" />
               <span className="text-2xl font-bold gradient-text">Felaco</span>
             </div>
             <p className="text-gray-600 mb-6 max-w-md">

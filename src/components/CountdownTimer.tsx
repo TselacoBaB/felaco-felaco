@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Clock } from "lucide-react";
 
 const CountdownTimer = () => {
-  const targetDate = new Date("2025-05-18T08:00:00Z");
+  const targetDate = new Date("2025-05-18T23:00:00Z");
   const [timeRemaining, setTimeRemaining] = useState({
     days: 0,
     hours: 0,
@@ -63,7 +63,7 @@ const CountdownTimer = () => {
       </div>
       
       <p className="text-center text-sm text-gray-600 mt-4">
-        Until official launch on May 18, 2025 at 08:00 UTC
+        Until official launch on May 18, 2025 at 23:00 UTC
       </p>
     </div>
   );

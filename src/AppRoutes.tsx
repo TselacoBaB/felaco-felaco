@@ -1,4 +1,3 @@
-
 import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MobileLayout from "./components/MobileLayout";
@@ -17,6 +16,7 @@ import CreatorProfile from "./pages/app/CreatorProfile";
 import CreatorDashboard from "./pages/app/CreatorDashboard";
 import CreatorAnalytics from "./pages/app/CreatorAnalytics";
 import CreatorWallet from "./pages/app/CreatorWallet";
+import Settings from "./pages/app/Settings";
 import NotFound from "./pages/NotFound";
 
 const AppRoutes = () => {
@@ -114,6 +114,14 @@ const AppRoutes = () => {
         <ProtectedRoute requiredRole="creator">
           <MobileLayout>
             <CreatorWallet />
+          </MobileLayout>
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/app/settings" element={
+        <ProtectedRoute>
+          <MobileLayout>
+            <Settings />
           </MobileLayout>
         </ProtectedRoute>
       } />

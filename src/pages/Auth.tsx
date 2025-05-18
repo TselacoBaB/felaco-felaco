@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -37,7 +36,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 type SignupFormValues = z.infer<typeof signupSchema>;
 
 const Auth = () => {
-  const { user, signIn, signUp, loading } = useAuth();
+  const { user, userRole, signIn, signUp, loading } = useAuth();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
@@ -65,7 +64,7 @@ const Auth = () => {
     setIsSubmitting(true);
     try {
       await signIn(data.email, data.password);
-      navigate("/");
+      // Navigation is handled by useEffect below
     } catch (error) {
       console.error(error);
     } finally {
@@ -76,7 +75,10 @@ const Auth = () => {
   const handleSignup = async (data: SignupFormValues) => {
     setIsSubmitting(true);
     try {
-      await signUp(data.email, data.password, data.username, data.fullName);
+      await signUp(data.email, data.password, {
+        username: data.username,
+        full_name: data.fullName,
+      });
       setActiveTab("login");
     } catch (error) {
       console.error(error);
@@ -85,16 +87,40 @@ const Auth = () => {
     }
   };
 
-  // Redirect if already logged in
-  if (user && !loading) {
-    return <Navigate to="/" />;
+  // Redirect if already logged in and userRole is set
+  useEffect(() => {
+    if (!loading && user) {
+      const randomString = Math.random().toString(36).substring(2, 10);
+      if (userRole === "super-admin" || userRole === "admin") navigate(`/admin/${randomString}`);
+      else if (userRole === "creator") navigate(`/app/creator-dashboard/${randomString}`);
+      else if (userRole === "user") navigate(`/app/dashboard/${randomString}`);
+    }
+  }, [user, userRole, loading, navigate]);
+
+  // Show a loading spinner while auth state is being determined
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-felaco-purple/10 to-felaco-blue/10">
+        <div className="flex flex-col items-center">
+          <img
+            src="/lovable-uploads/icon_logo_f.png"
+            alt="Felaco Logo"
+            className="h-16 w-16 animate-spin-slow mb-4"
+            style={{ background: 'transparent', objectFit: 'contain', filter: 'drop-shadow(0 0 8px #a78bfa)' }}
+            onLoad={(e) => e.currentTarget.style.opacity = '1'}
+            onError={(e) => e.currentTarget.style.display = 'none'}
+          />
+          <p className="text-lg font-semibold text-felaco-purple">Loading...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-br from-felaco-purple/10 to-felaco-blue/10">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
         <div className="flex justify-center mb-6">
-          <img src="/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png" alt="Felaco Logo" className="h-12 w-auto" />
+          <img src="/lovable-uploads/icon_logo_f.png" alt="Felaco Logo" className="h-12 w-auto" />
         </div>
         <h1 className="text-2xl font-bold text-center mb-6">Welcome to Felaco</h1>
         

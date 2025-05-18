@@ -1,21 +1,31 @@
-
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
 // Define the type of role a user can have
-export type UserRole = "user" | "creator" | "admin";
+export type UserRole = "user" | "creator" | "admin" | "super-admin";
+
+// Define the user profile type
+interface UserProfile {
+  id: string;
+  full_name: string;
+  username: string;
+  avatar_url: string;
+  is_creator: boolean;
+  role?: UserRole;
+  // ...other fields as needed
+}
 
 // Define what the AuthContext will contain
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   userRole: UserRole;
-  userProfile: any | null;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, metadata?: any) => Promise<{ error: any }>;
+  userProfile: UserProfile | null;
+  signIn: (email: string, password: string) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string, metadata?: Partial<UserProfile>) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
-  updateProfile: (updates: any) => Promise<{ error: any }>;
+  updateProfile: (updates: Partial<UserProfile>) => Promise<{ error: string | null }>;
 }
 
 // Create the context
@@ -25,13 +35,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [userRole, setUserRole] = useState<UserRole>("user"); // Default role
-  const [userProfile, setUserProfile] = useState<any | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Get session on initialization
     const fetchSession = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
+      const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user ?? null);
       setLoading(false);
     };
@@ -71,14 +81,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         .single();
 
       if (error) throw error;
-      
-      setUserProfile(profile);
-      
+      setUserProfile(profile as UserProfile);
       // Set role based on profile data
       if (profile.is_creator) {
         setUserRole("creator");
-      } else if (profile.is_admin) {
-        setUserRole("admin");
+      } else if (profile.role && ["admin", "super-admin"].includes(profile.role)) {
+        setUserRole(profile.role as UserRole);
       } else {
         setUserRole("user");
       }
@@ -91,29 +99,47 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Sign in function
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-      return { error };
-    } catch (error) {
-      return { error };
+      if (error) return { error: error.message };
+      // Fetch user profile and set role after sign in
+      if (data.user) {
+        await fetchUserProfile(data.user.id);
+      }
+      return { error: null };
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return { error: error.message };
+      }
+      return { error: 'Unknown error' };
     }
   };
 
   // Sign up function
-  const signUp = async (email: string, password: string, metadata?: any) => {
+  const signUp = async (email: string, password: string, metadata?: Partial<UserProfile>) => {
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          data: metadata
-        }
+        options: { data: metadata }
       });
-      return { error };
-    } catch (error) {
-      return { error };
+      if (error) return { error: error.message };
+      // Create wallet for the new user
+      const userId = data.user?.id;
+      if (userId) {
+        await supabase.from('wallets').insert([
+          { user_id: userId, type: metadata?.role || 'user' }
+        ]);
+        await fetchUserProfile(userId);
+      }
+      return { error: null };
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return { error: error.message };
+      }
+      return { error: 'Unknown error' };
     }
   };
 
@@ -123,21 +149,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Update user profile
-  const updateProfile = async (updates: any) => {
+  const updateProfile = async (updates: Partial<UserProfile>) => {
     try {
       const { error } = await supabase
         .from('profiles')
         .update(updates)
         .eq('id', user?.id);
-      
       // If successful, refresh the profile
       if (!error && user) {
         fetchUserProfile(user.id);
       }
-
-      return { error };
-    } catch (error) {
-      return { error };
+      return { error: error ? error.message : null };
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return { error: error.message || "Unknown error" };
+      }
+      return { error: "Unknown error" };
     }
   };
 
@@ -164,3 +191,19 @@ export const useAuth = () => {
   }
   return context;
 };
+
+// In your login/signup page (e.g. src/pages/Auth.tsx), use this logic:
+//
+// import { useAuth } from "@/contexts/AuthContext";
+// import { useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
+//
+// const { userRole, loading } = useAuth();
+// const navigate = useNavigate();
+// useEffect(() => {
+//   if (!loading) {
+//     if (userRole === "super-admin" || userRole === "admin") navigate("/admin");
+//     else if (userRole === "creator") navigate("/app/creator-dashboard");
+//     else if (userRole === "user") navigate("/app/dashboard");
+//   }
+// }, [userRole, loading, navigate]);

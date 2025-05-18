@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
@@ -13,7 +12,7 @@ const Navbar = () => {
     <nav className="w-full py-4 px-6 md:px-12 flex justify-between items-center z-50 bg-white/80 backdrop-blur-md sticky top-0">
       <div className="flex items-center gap-2">
         <Link to="/">
-          <img src="/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png" alt="Felaco Logo" className="h-10 w-auto" />
+          <img src="/lovable-uploads/icon_logo_f.png" alt="Felaco Logo" className="h-10 w-auto" />
         </Link>
         <Link to="/">
           <span className="text-2xl font-bold gradient-text">Felaco</span>
