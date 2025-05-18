@@ -1,0 +1,113 @@
+
+{
+  "name": "Felaco - Revolutionary Social Platform for Creators and Fans",
+  "short_name": "Felaco",
+  "description": "Connect with creators and fans in a revolutionary social platform with premium content and livestreams",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#9b87f5",
+  "orientation": "portrait",
+  "scope": "/",
+  "prefer_related_applications": false,
+  "categories": ["social", "entertainment", "lifestyle", "streaming"],
+  "screenshots": [
+    {
+      "src": "/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Felaco Feed Screen"
+    },
+    {
+      "src": "/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Felaco Explore Screen"
+    },
+    {
+      "src": "/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png", 
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Felaco Profile Screen"
+    }
+  ],
+  "icons": [
+    {
+      "src": "/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Home Feed",
+      "short_name": "Home",
+      "description": "View your home feed",
+      "url": "/app",
+      "icons": [
+        {
+          "src": "/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Upload Content",
+      "short_name": "Upload",
+      "description": "Create new content",
+      "url": "/app?action=upload",
+      "icons": [
+        {
+          "src": "/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "short_name": "Chat",
+      "description": "View your messages",
+      "url": "/app/messages",
+      "icons": [
+        {
+          "src": "/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Explore",
+      "short_name": "Discover",
+      "description": "Discover new content and creators",
+      "url": "/app/explore",
+      "icons": [
+        {
+          "src": "/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "short_name": "Profile",
+      "description": "View your profile",
+      "url": "/app/profile",
+      "icons": [
+        {
+          "src": "/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}

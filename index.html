@@ -1,0 +1,170 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Felaco - Connect with creators and fans</title>
+    <meta name="description" content="Felaco - A revolutionary social platform for creators and fans" />
+    <meta name="author" content="Lovable" />
+    <meta name="theme-color" content="#9b87f5" />
+
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Felaco" />
+    
+    <!-- iOS PWA Splash Screens -->
+    <link rel="apple-touch-startup-image" href="/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" />
+    <link rel="apple-touch-startup-image" href="/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" />
+    <link rel="apple-touch-startup-image" href="/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" />
+    <link rel="apple-touch-startup-image" href="/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
+    <link rel="apple-touch-startup-image" href="/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" />
+    <link rel="apple-touch-startup-image" href="/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
+
+    <!-- Social Media Meta Tags -->
+    <meta property="og:title" content="Felaco - Connect with creators and fans" />
+    <meta property="og:description" content="A revolutionary social platform for creators and fans" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@lovable_dev" />
+    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    
+    <!-- Mobile-specific metas -->
+    <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
+    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
+    <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- PWA Service Worker Registration with improved install experience -->
+    <script>
+      // Check if browser supports service workers
+      if ('serviceWorker' in navigator) {
+        // Defer registration until after page load for better performance
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+              console.log('ServiceWorker registration successful with scope: ', registration.scope);
+              
+              // Listen for service worker updates
+              registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                console.log('Service Worker update found!');
+                
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed') {
+                    if (navigator.serviceWorker.controller) {
+                      // New content is available, show refresh prompt
+                      if (confirm('New content available! Reload to update?')) {
+                        window.location.reload();
+                      }
+                    }
+                  }
+                });
+              });
+            })
+            .catch(error => {
+              console.log('ServiceWorker registration failed: ', error);
+            });
+            
+          // Set up beforeinstallprompt event to customize the install experience
+          let deferredPrompt;
+          window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent Chrome from showing the default install prompt
+            e.preventDefault();
+            // Store the event for later use
+            deferredPrompt = e;
+            
+            // Optionally show your own install button or UI
+            const installButton = document.createElement('button');
+            installButton.id = 'install-button';
+            installButton.textContent = 'Install Felaco';
+            installButton.className = 'fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-felaco-purple text-white py-2 px-4 rounded-full shadow-lg z-50 flex items-center';
+            installButton.style.display = 'none'; // Hide by default
+            
+            // Add icon
+            const icon = document.createElement('span');
+            icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg>`;
+            installButton.prepend(icon);
+            
+            document.body.appendChild(installButton);
+            
+            // Show the install button after 30 seconds
+            setTimeout(() => {
+              installButton.style.display = 'flex';
+            }, 30000);
+            
+            // Add click event to trigger the install prompt
+            installButton.addEventListener('click', () => {
+              // Show the install prompt
+              deferredPrompt.prompt();
+              
+              // Wait for the user to respond to the prompt
+              deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                  console.log('User accepted the install prompt');
+                } else {
+                  console.log('User dismissed the install prompt');
+                }
+                // Clear the deferredPrompt variable
+                deferredPrompt = null;
+                // Hide the install button
+                installButton.style.display = 'none';
+              });
+            });
+          });
+          
+          // Handle installed event
+          window.addEventListener('appinstalled', (evt) => {
+            console.log('Application was installed');
+            // Hide install button if it exists
+            const installButton = document.getElementById('install-button');
+            if (installButton) {
+              installButton.style.display = 'none';
+            }
+          });
+        });
+      }
+      
+      // Handle online/offline status changes
+      window.addEventListener('online', () => {
+        console.log('Application is online');
+        // Notify user they're back online
+        if ('Notification' in window && Notification.permission === 'granted') {
+          navigator.serviceWorker.ready.then(registration => {
+            registration.showNotification('Connected', {
+              body: 'You\'re back online',
+              icon: '/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png',
+              badge: '/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png',
+            });
+          });
+        }
+      });
+      
+      window.addEventListener('offline', () => {
+        console.log('Application is offline');
+        // Notify user they're offline
+        if ('Notification' in window && Notification.permission === 'granted') {
+          navigator.serviceWorker.ready.then(registration => {
+            registration.showNotification('Disconnected', {
+              body: 'You\'re currently offline. Some features may be limited.',
+              icon: '/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png',
+              badge: '/lovable-uploads/c57b3ac2-d55c-4fbe-869f-d3207d6b9bde.png',
+            });
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
