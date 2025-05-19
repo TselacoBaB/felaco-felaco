@@ -147,69 +147,73 @@ const ChatView = () => {
   };
 
   return (
-    <div className="flex flex-col h-[80vh] max-w-2xl mx-auto border rounded-lg bg-white shadow">
-      <div className="flex-1 overflow-y-auto p-4">
-        {loading ? (
-          <div className="text-center text-gray-400">Loading...</div>
-        ) : error ? (
-          <div className="text-center text-red-500">{error}</div>
-        ) : messages.length === 0 ? (
-          <div className="text-center text-gray-400">No messages yet.</div>
-        ) : (
-          messages.map((msg) => {
-            const isMine = msg.sender_id === currentUserId;
-            const canDelete = isMine && (Date.now() - new Date(msg.created_at).getTime() < 60 * 60 * 1000);
-            return (
-              <div
-                key={msg.id}
-                className={`mb-2 flex ${isMine ? "justify-end" : "justify-start"}`}
-              >
-                <div className={`rounded-lg px-4 py-2 max-w-xs break-words relative ${isMine ? "bg-felaco-purple text-white" : "bg-gray-200 text-gray-900"}`}>
-                  {msg.message_type === "text" && msg.content}
-                  {msg.message_type === "image" && msg.media_url && (
-                    <img src={msg.media_url} alt="media" className="max-w-[200px] rounded-lg" />
-                  )}
-                  {msg.message_type === "video" && msg.media_url && (
-                    <video src={msg.media_url} controls className="max-w-[200px] rounded-lg" />
-                  )}
-                  <div className="text-xs text-gray-400 mt-1 text-right">{new Date(msg.created_at).toLocaleTimeString()}</div>
-                  {canDelete && (
-                    <button
-                      onClick={() => handleDeleteMessage(msg.id)}
-                      className="absolute top-1 right-1 text-xs text-red-400 hover:text-red-600 bg-white/70 rounded p-1"
-                      title="Delete message"
-                    >
-                      🗑️
-                    </button>
-                  )}
-                </div>
-              </div>
-            );
-          })
-        )}
-        <div ref={messagesEndRef} />
-      </div>
-      <form onSubmit={sendMessage} className="flex items-center border-t p-2 gap-2 bg-gray-50">
-        <button type="button" onClick={() => setShowEmoji((v) => !v)} className="bg-gray-100 rounded-full p-2 hover:bg-gray-200" title="Emoji">
-          <span role="img" aria-label="emoji">😊</span>
-        </button>
-        {showEmoji && (
-          <div className="absolute bottom-20 left-4 z-50">
-            <EmojiPicker onSelect={handleEmojiSelect} />
+    <div className="flex justify-center w-full min-h-screen bg-gray-50">
+      <div className="w-full max-w-4xl px-4 sm:px-4 md:px-8 lg:px-8 xl:px-8" style={{ width: '80%' }}>
+        <div className="flex flex-col h-[80vh] max-w-2xl mx-auto border rounded-lg bg-white shadow">
+          <div className="flex-1 overflow-y-auto p-4">
+            {loading ? (
+              <div className="text-center text-gray-400">Loading...</div>
+            ) : error ? (
+              <div className="text-center text-red-500">{error}</div>
+            ) : messages.length === 0 ? (
+              <div className="text-center text-gray-400">No messages yet.</div>
+            ) : (
+              messages.map((msg) => {
+                const isMine = msg.sender_id === currentUserId;
+                const canDelete = isMine && (Date.now() - new Date(msg.created_at).getTime() < 60 * 60 * 1000);
+                return (
+                  <div
+                    key={msg.id}
+                    className={`mb-2 flex ${isMine ? "justify-end" : "justify-start"}`}
+                  >
+                    <div className={`rounded-lg px-4 py-2 max-w-xs break-words relative ${isMine ? "bg-felaco-purple text-white" : "bg-gray-200 text-gray-900"}`}>
+                      {msg.message_type === "text" && msg.content}
+                      {msg.message_type === "image" && msg.media_url && (
+                        <img src={msg.media_url} alt="media" className="max-w-[200px] rounded-lg" />
+                      )}
+                      {msg.message_type === "video" && msg.media_url && (
+                        <video src={msg.media_url} controls className="max-w-[200px] rounded-lg" />
+                      )}
+                      <div className="text-xs text-gray-400 mt-1 text-right">{new Date(msg.created_at).toLocaleTimeString()}</div>
+                      {canDelete && (
+                        <button
+                          onClick={() => handleDeleteMessage(msg.id)}
+                          className="absolute top-1 right-1 text-xs text-red-400 hover:text-red-600 bg-white/70 rounded p-1"
+                          title="Delete message"
+                        >
+                          🗑️
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+            <div ref={messagesEndRef} />
           </div>
-        )}
-        <MediaUpload onUpload={handleMediaUpload} />
-        <input
-          className="flex-1 rounded-full border px-4 py-2 focus:outline-none"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type a message..."
-          disabled={sending}
-        />
-        <button type="submit" className="bg-felaco-purple text-white rounded-full px-4 py-2 font-semibold" disabled={sending || !input.trim()}>
-          Send
-        </button>
-      </form>
+          <form onSubmit={sendMessage} className="flex items-center border-t p-2 gap-2 bg-gray-50">
+            <button type="button" onClick={() => setShowEmoji((v) => !v)} className="bg-gray-100 rounded-full p-2 hover:bg-gray-200" title="Emoji">
+              <span role="img" aria-label="emoji">😊</span>
+            </button>
+            {showEmoji && (
+              <div className="absolute bottom-20 left-4 z-50">
+                <EmojiPicker onSelect={handleEmojiSelect} />
+              </div>
+            )}
+            <MediaUpload onUpload={handleMediaUpload} />
+            <input
+              className="flex-1 rounded-full border px-4 py-2 focus:outline-none"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type a message..."
+              disabled={sending}
+            />
+            <button type="submit" className="bg-felaco-purple text-white rounded-full px-4 py-2 font-semibold" disabled={sending || !input.trim()}>
+              Send
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

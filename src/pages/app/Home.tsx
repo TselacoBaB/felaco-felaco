@@ -1,76 +1,83 @@
-
 import { useAuth } from "@/contexts/AuthContext";
+import { useEffect, useState } from "react";
+import { getAllPostsNewestFirst, Post } from "@/lib/feedDataUtils";
 
 const Home = () => {
   const { user } = useAuth();
-  
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchPosts() {
+      setLoading(true);
+      const allPosts = await getAllPostsNewestFirst();
+      setPosts(allPosts);
+      setLoading(false);
+    }
+    fetchPosts();
+  }, []);
+
   return (
-    <div className="px-4 py-6">
-      <header className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold gradient-text">Felaco</h1>
-        <div className="flex items-center gap-4">
-          <button className="text-gray-800">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-          </button>
-          <button className="text-gray-800">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-circle"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
-          </button>
-        </div>
-      </header>
-      
-      <div className="mb-6 overflow-x-auto">
-        <div className="flex gap-4 pb-2">
-          {[1, 2, 3, 4, 5, 6].map((item) => (
-            <div key={item} className="flex flex-col items-center">
-              <div className="h-16 w-16 rounded-full bg-gradient-to-br from-felaco-purple to-felaco-blue p-0.5">
-                <div className="h-full w-full rounded-full border-2 border-white bg-gray-100"></div>
-              </div>
-              <span className="mt-1 text-xs">User {item}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-      
-      <div className="space-y-6">
-        {[1, 2, 3].map((post) => (
-          <div key={post} className="rounded-lg border border-gray-200 bg-white">
-            <div className="flex items-center gap-2 p-3">
-              <div className="h-8 w-8 rounded-full bg-gray-300"></div>
-              <div>
-                <p className="font-medium">username{post}</p>
-                <p className="text-xs text-gray-500">Location</p>
-              </div>
-              <button className="ml-auto text-gray-500">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-more-horizontal"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-              </button>
-            </div>
-            <div className="aspect-square w-full bg-gray-200"></div>
-            <div className="p-3">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex gap-4">
-                  <button>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-                  </button>
-                  <button>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-circle"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
-                  </button>
-                  <button>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-send"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
-                  </button>
-                </div>
-                <button>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-bookmark"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
-                </button>
-              </div>
-              <p className="text-sm font-medium">123 likes</p>
-              <p className="mt-1 text-sm">
-                <span className="font-medium">username{post}</span> This is a post caption with some text content...
-              </p>
-              <p className="mt-1 text-xs text-gray-500">View all 24 comments</p>
-              <p className="mt-1 text-xs text-gray-400">2 HOURS AGO</p>
-            </div>
+    <div className="flex justify-center w-full">
+      <div className="w-full max-w-4xl px-4 sm:px-4 md:px-8 lg:px-8 xl:px-8" style={{ width: '80%' }}>
+        <header className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold gradient-text">Felaco</h1>
+          <div className="flex items-center gap-4">
+            <button className="text-gray-800" aria-label="Likes">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            </button>
+            <button className="text-gray-800" aria-label="Messages">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-circle"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
+            </button>
           </div>
-        ))}
+        </header>
+        {loading ? (
+          <div className="text-center py-12 text-gray-500">Loading posts...</div>
+        ) : (
+          <div className="space-y-6">
+            {posts.length === 0 ? (
+              <div className="text-center text-gray-400 py-12">No posts available.</div>
+            ) : (
+              posts.map((post) => (
+                <div key={post.id} className="rounded-lg border border-gray-200 bg-white overflow-hidden">
+                  {/* Media rendering (image/video/placeholder) */}
+                  <div className="aspect-square w-full bg-gray-200 flex items-center justify-center">
+                    {post.contentUrl ? (
+                      <img
+                        src={post.contentUrl}
+                        alt={post.caption || "Post media"}
+                        className="object-cover w-full h-full"
+                        style={{ maxHeight: 400 }}
+                      />
+                    ) : (
+                      <span className="text-gray-400">Media</span>
+                    )}
+                  </div>
+                  {/* Caption and paywall logic */}
+                  <div className="p-3">
+                    {post.locked ? (
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center z-10">
+                          <span className="text-white font-bold text-lg">Locked Content</span>
+                          <button className="mt-2 px-4 py-2 bg-felaco-purple text-white rounded-full">Unlock</button>
+                        </div>
+                        <div className="opacity-40 pointer-events-none">
+                          {/* Optionally show blurred preview */}
+                          <span className="text-gray-400">Locked preview</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <p className="text-sm font-medium">{post.caption || "No caption"}</p>
+                        <p className="text-xs text-gray-500 mt-1">by {post.username || "Unknown"}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

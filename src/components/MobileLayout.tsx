@@ -68,9 +68,11 @@ const MobileLayout = ({ children }: MobileLayoutProps) => {
   };
 
   return (
-    <div className={`min-h-screen flex flex-col bg-gray-50`}>
-      <main className="flex-1 w-full max-w-screen-sm mx-auto px-4 sm:px-4 md:px-4 lg:px-4 xl:px-4">
-        {children}
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <main className="flex-1 w-full flex justify-center">
+        <div className="w-full max-w-4xl px-4 sm:px-4 md:px-8 lg:px-8 xl:px-8" style={{ width: '80%' }}>
+          {children}
+        </div>
       </main>
       <BottomNav />
     </div>

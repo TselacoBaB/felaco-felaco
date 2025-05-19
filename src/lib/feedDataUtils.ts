@@ -15,6 +15,10 @@ function normalizePost(raw: RawPost): Post {
     engagementScore: Number(raw.engagementScore ?? raw.engagement_score ?? 0),
     creatorId: String(raw.creatorId ?? raw.creator_id ?? ''),
     nsfw: Boolean(raw.nsfw ?? false),
+    locked: Boolean(raw.locked ?? false),
+    caption: typeof raw.caption === 'string' ? raw.caption : '',
+    contentUrl: typeof raw.content_url === 'string' ? raw.content_url : undefined,
+    username: typeof raw.username === 'string' ? raw.username : undefined,
   };
 }
 
@@ -86,3 +90,15 @@ export function getCuratedPosts(): Post[] {
   // Return a static fallback list of curated posts (empty for now)
   return [];
 }
+
+// Fetch all posts for the Home feed, newest first (including locked/paywalled content)
+export async function getAllPostsNewestFirst(): Promise<Post[]> {
+  const { data, error } = await supabase
+    .from('posts')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error || !data) return [];
+  return (data as RawPost[]).map(normalizePost);
+}
+
+export type { Post } from './getRecommendedPosts';

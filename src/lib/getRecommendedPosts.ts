@@ -11,6 +11,10 @@ export interface Post {
   engagementScore: number;
   creatorId: string;
   nsfw?: boolean;
+  locked?: boolean; // paywall support
+  caption?: string; // post caption
+  contentUrl?: string; // media url (image/video)
+  username?: string; // creator username for display
 }
 
 export async function getRecommendedPosts(userId: string): Promise<Post[]> {
